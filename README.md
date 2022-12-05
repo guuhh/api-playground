@@ -90,7 +90,7 @@ Set up Api Testing using Postman + Newman
 8. Run `Docker build —tag “apiplayground” .`
 9. Create a container: `Docker run -d -p 3030:3030 apiplayground`
 10. Install newman `npm install -g newman`
-11. Run `newman run public/postman/services-test-integrated.postman_collection.json`
+11. Run `newman run public/postman/services-integration-testing.postman_collection.json`
 
 ## Help
 
