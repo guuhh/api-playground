@@ -1,0 +1,582 @@
+{
+	"info": {
+		"_postman_id": "2adc62db-f422-4ff6-9046-65469a797c3d",
+		"name": "Best Buy API Playground",
+		"description": "A sample dataset and API for you to experiment with.\n\nContact Support:\n Name: Best Buy API team\n Email: developer@bestbuy.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24749970"
+	},
+	"item": [
+		{
+			"name": "Service Script Tests",
+			"item": [
+				{
+					"name": "Positive Test Scenarios",
+					"item": [
+						{
+							"name": "Create a new service",
+							"item": [
+								{
+									"name": "create a new service",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"//var Ajv = require('ajv');",
+													"//ajv = new Ajv({logger: console});",
+													"",
+													"var jsonData = pm.response.json(); //JSON.parse(responseBody)",
+													"var schema = pm.environment.get(\"serviceSchema\");",
+													"",
+													"pm.environment.set(\"currentNewServiceId\", jsonData.id);",
+													"pm.environment.set(\"currentNewServiceName\", jsonData.name);",
+													"",
+													"pm.test('Schema service is valid', function() {",
+													" pm.response.to.have.jsonSchema(schema);",
+													" pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"Status code is 201\", function () {",
+													"pm.response.to.have.status(201);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"NewService{{randomNumber}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/services",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find a new service created",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonData = pm.response.json(); //JSON.parse(responseBody)",
+													"var schema = pm.environment.get(\"serviceSchema\");",
+													"",
+													"var serviceId = pm.environment.get(\"currentNewServiceId\");",
+													"var serviceName = pm.environment.get(\"currentNewServiceName\");",
+													"",
+													"",
+													"pm.test('Schema service is valid', function() {",
+													" pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"Status code is 200\", function () {",
+													"pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test('Validate id from new service', function() {",
+													"   pm.expect(jsonData.id).to.eql(serviceId);",
+													"})",
+													"",
+													"pm.test('Validate name from new service', function() {",
+													"   pm.expect(jsonData.name).to.eql(serviceName);",
+													"})"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/services/{{currentNewServiceId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"{{currentNewServiceId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.environment.set(\"serviceSchema\",{",
+											"     \"service\": {",
+											"      \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+											"      \"type\": \"object\",",
+											"      \"properties\": {",
+											"         \"data\": {",
+											"          \"type\": \"object\"",
+											"        },",
+											"       \"properties\": {",
+											"         \"id\": {",
+											"          \"type\": \"integer\",",
+											"        },",
+											"        \"name\": {",
+											"          \"type\": \"string\",",
+											"          \"maxLength\": 100,",
+											"          \"minLength\": 1,",
+											"          \"items\" : {",
+											"              \"type\" : \"string\"",
+											"          }",
+											"        }",
+											"      },",
+											"       \"additionalProperties\": false,",
+											"       \"required\": [",
+											"        \"id\",",
+											"        \"name\"",
+											"      ]",
+											"     }",
+											"   }",
+											"})"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							]
+						},
+						{
+							"name": "Update a new service",
+							"item": [
+								{
+									"name": "update a service created",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonData = pm.response.json(); //JSON.parse(responseBody)",
+													"var schema = pm.environment.get(\"serviceSchema\");",
+													"pm.environment.set(\"updatedNewServiceName\", jsonData.name);",
+													"var updatedServiceName =  pm.environment.get(\"updatedNewServiceName\");",
+													"",
+													"var serviceName = pm.environment.get(\"currentNewServiceName\");",
+													"",
+													"pm.test('Schema service is valid', function() {",
+													" pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"Status code is 200\", function () {",
+													"pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test('Validate updated name from new service', function() {",
+													"   pm.expect(jsonData.name).to.eql(updatedServiceName);",
+													"})",
+													"",
+													"pm.test('Validate updated name is different to old name for new service', function() {",
+													"   pm.expect(jsonData.name).to.not.eql(serviceName);",
+													"})"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Updated-{{currentNewServiceName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/services/{{currentNewServiceId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"{{currentNewServiceId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "find a updated service",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonData = pm.response.json(); //JSON.parse(responseBody)",
+													"",
+													"var serviceId = pm.environment.get(\"currentNewServiceId\");",
+													"var updatedServiceName =  pm.environment.get(\"updatedNewServiceName\");",
+													"",
+													"pm.test(\"Status code is 200\", function () {",
+													"pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test('Validate id from new service', function() {",
+													"   pm.expect(jsonData.id).to.eql(serviceId);",
+													"})",
+													"",
+													"pm.test('Validate name from new service', function() {",
+													"   pm.expect(jsonData.name).to.eql(updatedServiceName);",
+													"})"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/services/{{currentNewServiceId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"{{currentNewServiceId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Delete a service created",
+							"item": [
+								{
+									"name": "delete a service",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonData = pm.response.json(); //JSON.parse(responseBody)",
+													"var serviceId = pm.environment.get(\"currentNewServiceId\");",
+													"var textWithServiceId = `No record found for id '${serviceId}'`;",
+													"",
+													"var serviceId = pm.environment.get(\"currentNewServiceId\");",
+													"",
+													"var updatedServiceName =  pm.environment.get(\"updatedNewServiceName\");",
+													"var serviceName = pm.environment.get(\"currentNewServiceName\");",
+													"",
+													"pm.test(\"Status code is 200\", function () {",
+													"pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test('Validate id from deleted service', function() {",
+													"   pm.expect(jsonData.id).to.eql(serviceId);",
+													"})",
+													"",
+													"pm.test('Validate name from deleted service', function() {",
+													"   pm.expect(jsonData.name).to.eql(updatedServiceName);",
+													"})"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/services/{{currentNewServiceId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"{{currentNewServiceId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "not find deleted service",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonErrorData = pm.response.json(); //JSON.parse(responseBody)",
+													"var serviceId = pm.environment.get(\"currentNewServiceId\");",
+													"var textWithServiceId = `No record found for id '${serviceId}'`;",
+													"console.log(textWithServiceId)",
+													"",
+													"pm.test(\"Status code is 404\", function () {",
+													"pm.response.to.have.status(404);",
+													"});",
+													"",
+													"pm.test('Validate name from deleted service id', function() {",
+													"   pm.expect(jsonErrorData.message).to.eql(textWithServiceId);",
+													"})",
+													"",
+													"pm.test('Validate name from deleted service id', function() {",
+													"   pm.expect(jsonErrorData.name).to.eql(\"NotFound\");",
+													"})",
+													"",
+													"pm.test(\"Test data type of the response\", () => {",
+													"  pm.expect(jsonErrorData).to.be.an(\"object\");",
+													"  pm.expect(jsonErrorData.message).to.be.a(\"string\");",
+													"  pm.expect(jsonErrorData.message).to.be.a(\"string\");",
+													"  pm.expect(jsonErrorData.code).to.be.a(\"number\");",
+													"  pm.expect(jsonErrorData.className).to.be.an(\"string\");",
+													"  pm.expect(jsonErrorData.errors).to.be.an(\"object\");",
+													"})"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/services/{{currentNewServiceId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"{{currentNewServiceId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Mock - Services request",
+					"item": [
+						{
+							"name": "https://c65b9614-b794-4612-8dbc-ca3d5d549c65.mock.pstmn.io/services/1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//var Ajv = require('ajv');",
+											"//ajv = new Ajv({logger: console});",
+											"",
+											"var jsonData = pm.response.json(); //JSON.parse(responseBody)",
+											"var schema = pm.environment.get(\"serviceSchema\");",
+											"",
+											"pm.environment.set(\"currentNewServiceId\", jsonData.id);",
+											"pm.environment.set(\"currentNewServiceName\", jsonData.name);",
+											"",
+											"pm.test('Schema service is valid using Mock Service', function() {",
+											" pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://c65b9614-b794-4612-8dbc-ca3d5d549c65.mock.pstmn.io/services/1",
+									"protocol": "https",
+									"host": [
+										"c65b9614-b794-4612-8dbc-ca3d5d549c65",
+										"mock",
+										"pstmn",
+										"io"
+									],
+									"path": [
+										"services",
+										"1"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "find Service By Id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "https://c65b9614-b794-4612-8dbc-ca3d5d549c65.mock.pstmn.io/services/1",
+											"protocol": "https",
+											"host": [
+												"c65b9614-b794-4612-8dbc-ca3d5d549c65",
+												"mock",
+												"pstmn",
+												"io"
+											],
+											"path": [
+												"services",
+												"1"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Allow",
+											"value": "GET,POST,PUT,PATCH,DELETE"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Accept-Encoding"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "115"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"73-0nD6xjDYiG2Xk99ThaWN9uC+MnM\""
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 03 Dec 2022 15:47:12 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 35435,\n    \"name\": \"Mock - Geek Squad Services\",\n    \"createdAt\": \"2016-11-17T17:56:35.881Z\",\n    \"updatedAt\": \"2016-11-17T17:56:35.881Z\"\n}"
+								}
+							]
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.environment.set(\"baseUrl\", \"http://localhost:3030\");",
+					"pm.environment.set(\"randomNumber\", _.random(1,99));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3030",
+			"type": "string"
+		},
+		{
+			"key": "randomNumber",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "currentNewServiceId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "currentNewServiceName",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "serviceSchema",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "updatedNewServiceName",
+			"value": ""
+		}
+	]
+}

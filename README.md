@@ -74,6 +74,24 @@ The work of defining an API is difficult, and creating consistency within an org
 
 Run `npm test` and all the tests in the `test/` directory will be executed. Our test suite uses a combination of the [Mocha JavaScript test framework](https://mochajs.org/) and [semistandard](https://github.com/Flet/semistandard) to ensure code quality and consistency.
 
+## API Testing
+
+Step by Step
+
+Set up Api Testing using Postman + Newman
+
+1. To fix possible issues related Tod dependencies, use NodeJS version 10.12.0
+2. Firstly, install nvm using `brew install nvm`
+3. Whitin “api-playground” folder
+4. Install nodeJs using `nvm install 10.12.0`
+5. Do `nvm use 10.12.0`
+6. Confirm installation using `node -v`
+7. If use docker, create a image docker from docker file
+8. Run `Docker build —tag “apiplayground” .`
+9. Create a container: `Docker run -d -p 3030:3030 apiplayground`
+10. Install newman `npm install -g newman`
+11. Run `newman run public/postman/services-test-integrated.postman_collection.json`
+
 ## Help
 
 If you have questions, encounter a bug or would like to submit a new feature, please [open an issue on GitHub](https://github.com/bestbuy/api-playground/issues).
